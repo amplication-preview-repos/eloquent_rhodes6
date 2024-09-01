@@ -1,0 +1,67 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model TradingPosition {
+  createdAt   DateTime                   @default(now())
+  entryPrice  Float?
+  exitPrice   Float?
+  id          String                     @id @default(cuid())
+  quantity    Int?
+  status      EnumTradingPositionStatus?
+  symbolField String?
+  updatedAt   DateTime                   @updatedAt
+}
+
+model MarketScan {
+  createdAt        DateTime          @default(now())
+  id               String            @id @default(cuid())
+  name             String?
+  scanDate         DateTime?
+  tradingScenarios TradingScenario[]
+  updatedAt        DateTime          @updatedAt
+}
+
+model TradingScenario {
+  createdAt    DateTime    @default(now())
+  description  String?
+  id           String      @id @default(cuid())
+  marketScan   MarketScan? @relation(fields: [marketScanId], references: [id])
+  marketScanId String?
+  scenarioName String?
+  updatedAt    DateTime    @updatedAt
+}
+
+model ChartDescription {
+  createdAt   DateTime @default(now())
+  description String?
+  id          String   @id @default(cuid())
+  imageUrl    Json?
+  updatedAt   DateTime @updatedAt
+}
+
+model SentimentAnalysis {
+  createdAt      DateTime @default(now())
+  id             String   @id @default(cuid())
+  sentimentScore Float?
+  source         String?
+  updatedAt      DateTime @updatedAt
+}
+
+model UserFeedback {
+  createdAt    DateTime @default(now())
+  feedbackText String?
+  id           String   @id @default(cuid())
+  rating       Int?
+  updatedAt    DateTime @updatedAt
+  userId       String?
+}
+
+enum EnumTradingPositionStatus {
+  Option1
+}
